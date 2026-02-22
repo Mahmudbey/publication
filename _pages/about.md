@@ -2,16 +2,25 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Motto. Etc.
+subtitle: Researcher & Senior Lecturer at National University of Uzbekistan.
 
 profile:
   align: right
-  image: prof_pic.jpg
-  image_circular: false # crops the image to make it circular
+  image: prof_pic.jpg # O'zingizning rasmingizni assets/img/ papkasiga joylang
+  image_circular: false
   more_info: >
-    <p>555 your office number</p>
-    <p>123 your address street</p>
-    <p>Your City, State 12345</p>
+    <p>Tashkent, Uzbekistan</p>
+
+news: true 
+selected_papers: true 
+social: true
+---
+
+[cite_start]I am a Researcher and Senior Lecturer at the Department of Applied Mathematics and Computer Analysis, National University of Uzbekistan named after Mirzo Ulugbek[cite: 22]. [cite_start]I hold a Ph.D. in Applied Mathematics (Mathematical modelling. Numerical methods and software)[cite: 14].
+
+[cite_start]My main research interests are the mathematical modelling of nonlinear physical processes, including analysing the qualitative features of differential equation solutions, developing self-similar solutions, and conducting research[cite: 17]. [cite_start]Furthermore, I am deeply interested in Data Analysis[cite: 18].
+
+[cite_start]With over 6 years of experience in the Education and Research field [cite: 12][cite_start], I have extensive teaching experience in Mathematical modelling, Calculus, Database Management Systems, Numerical methods, and Programming (Python, C#, MATLAB) across multiple universities including NUUz and TSTU[cite: 19, 20, 73].
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
