@@ -31,27 +31,31 @@ jobs:
         run: |
           python -c "
           import requests, yaml, os
-          stats = {'scopus': {}, 'orcid': {}}
+          stats = {'scopus': {'h_index': 0, 'citations': 0, 'documents': 0}, 'orcid': {'works_count': 0, 'id': ''}}
           try:
-              r = requests.get(f'[https://api.elsevier.com/content/author/author_id/](https://api.elsevier.com/content/author/author_id/){os.environ[\"SCOPUS_ID\"]}', headers={'X-ELS-APIKey': os.environ['SCOPUS_API_KEY'], 'Accept': 'application/json'}, timeout=20)
+              sc_id = os.environ['SCOPUS_ID']
+              key = os.environ['SCOPUS_API_KEY']
+              r = requests.get(f'https://api.elsevier.com/content/author/author_id/{sc_id}', headers={'X-ELS-APIKey': key, 'Accept': 'application/json'}, timeout=20)
               if r.status_code == 200:
                   d = r.json()['author-retrieval-response'][0]['coredata']
                   stats['scopus'] = {'h_index': int(d.get('h-index', 0)), 'citations': int(d.get('citation-count', 0)), 'documents': int(d.get('document-count', 0))}
-          except: pass
+                  print('Scopus success')
+          except Exception as e: print(f'Scopus error: {e}')
           try:
-              r = requests.get(f'[https://pub.orcid.org/v3.0/](https://pub.orcid.org/v3.0/){os.environ[\"ORCID_ID\"]}/works', headers={'Accept': 'application/json'}, timeout=20)
+              orcid = os.environ['ORCID_ID']
+              r = requests.get(f'https://pub.orcid.org/v3.0/{orcid}/works', headers={'Accept': 'application/json'}, timeout=20)
               if r.status_code == 200:
-                  stats['orcid'] = {'works_count': len(r.json().get('group', [])), 'id': os.environ['ORCID_ID']}
-          except: pass
+                  stats['orcid'] = {'works_count': len(r.json().get('group', [])), 'id': orcid}
+                  print('ORCID success')
+          except Exception as e: print(f'ORCID error: {e}')
           os.makedirs('_data', exist_ok=True)
           with open('_data/stats.yml', 'w') as f:
               yaml.dump(stats, f)
           "
 
-      - name: Commit changes
+      - name: Commit and Push
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add _data/stats.yml
-          git commit -m "Update stats" || exit 0
-          git push
+          git diff --staged --quiet || (git commit -m "Update academic stats" && git push)
