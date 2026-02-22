@@ -1,0 +1,76 @@
+name: Update Academic Stats
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Har yakshanba yarim tunda ishlaydi
+  workflow_dispatch: # Manuel ishga tushirish imkoniyati
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install requests PyYAML
+
+      - name: Fetch Scopus Data
+        env:
+          SCOPUS_API_KEY: "1fccdc6e57093bf9c71cb758e206fefa"
+          SCOPUS_ID: "57432107100"
+        run: |
+          python -c "
+          import requests
+          import yaml
+          import os
+
+          def update_stats():
+              url = f'https://api.elsevier.com/content/author/author_id/{os.environ[\"SCOPUS_ID\"]}'
+              headers = {
+                  'X-ELS-APIKey': os.environ['SCOPUS_API_KEY'],
+                  'Accept': 'application/json'
+              }
+              
+              try:
+                  response = requests.get(url, headers=headers)
+                  response.raise_for_status()
+                  data = response.json()
+                  
+                  # Ma'lumotlarni parslash
+                  author_data = data['author-retrieval-response'][0]
+                  coredata = author_data['coredata']
+                  
+                  stats = {
+                      'h_index': int(coredata.get('h-index', 0)),
+                      'citations': int(coredata.get('citation-count', 0)),
+                      'documents': int(coredata.get('document-count', 0)),
+                      'orcid': coredata.get('orcid', ''),
+                      'last_updated': coredata.get('last-updated', '2026-02-22')
+                  }
+                  
+                  # _data papkasini yaratish va faylni yozish
+                  os.makedirs('_data', exist_ok=True)
+                  with open('_data/stats.yml', 'w') as f:
+                      yaml.dump(stats, f, default_flow_style=False)
+                  print('Stats successfully updated.')
+                  
+              except Exception as e:
+                  print(f'Error fetching data: {e}')
+                  exit(1)
+
+          update_stats()
+          "
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add _data/stats.yml
+          git commit -m "Automated update: Scopus stats [skip ci]" || echo "No changes to commit"
+          git push
