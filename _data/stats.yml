@@ -1,7 +1,7 @@
 orcid:
-  id: "0000-0002-3326-4390"
-  works_count: 5  # Bu skript orqali yangilanadi
+  id: 0000-0002-3326-4390
+  works_count: 16
 scopus:
-  citations: 57  # Buni o'zingiz Scopus-dan ko'rib yozib qo'ying
+  citations: 57
   documents: 14
   h_index: 5
