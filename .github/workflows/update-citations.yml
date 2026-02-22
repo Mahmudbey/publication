@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests PyYAML
 
-      - name: Fetch Data with Fallback
+      - name: Fetch Data
         env:
           SCOPUS_API_KEY: ${{ secrets.SCOPUS_API_KEY }}
           SCOPUS_ID: "57432107100"
@@ -32,45 +32,42 @@ jobs:
           python -c "
           import requests, yaml, os
 
-          # Boshlang'ich (default) qiymatlar
-          stats = {
-              'scopus': {'h_index': 'N/A', 'citations': 'N/A', 'documents': 'N/A'},
-              'orcid': {'works_count': 0, 'id': os.environ['ORCID_ID']}
-          }
+          # Avvalgi ma'lumotlarni o'qish (agar bo'lsa)
+          file_path = '_data/stats.yml'
+          if os.path.exists(file_path):
+              with open(file_path, 'r') as f:
+                  stats = yaml.safe_load(f) or {}
+          else:
+              stats = {'scopus': {'h_index': 0, 'citations': 0, 'documents': 0}, 'orcid': {}}
 
-          # 1. Scopus API - 401 xatoligini chetlab o'tishga urinish
+          # 1. ORCID Yangilash (Bu doim ishlaydi)
           try:
-              headers = {
-                  'X-ELS-APIKey': os.environ['SCOPUS_API_KEY'],
-                  'Accept': 'application/json'
-              }
-              # Author Retrieval o'rniga Search API ni sinab ko'ramiz (ba'zan u ochiqroq bo'ladi)
-              search_url = f'https://api.elsevier.com/content/search/scopus?query=AU-ID({os.environ[\"SCOPUS_ID\"]})'
-              r = requests.get(search_url, headers=headers, timeout=15)
-              
+              orcid_id = os.environ['ORCID_ID']
+              r = requests.get(f'https://pub.orcid.org/v3.0/{orcid_id}/works', headers={'Accept': 'application/json'}, timeout=15)
               if r.status_code == 200:
-                  res = r.json().get('search-results', {})
-                  count = res.get('opensearch:totalResults', 'N/A')
-                  stats['scopus']['documents'] = count
-                  print('Scopus Search success')
+                  stats['orcid'] = {'works_count': len(r.json().get('group', [])), 'id': orcid_id}
+                  print('✅ ORCID updated')
+          except: print('⚠️ ORCID failed')
+
+          # 2. Scopus (Faqatgina ruxsat bo'lsa yangilaydi, bo'lmasa eski qiymatni saqlaydi)
+          try:
+              headers = {'X-ELS-APIKey': os.environ['SCOPUS_API_KEY'], 'Accept': 'application/json'}
+              url = f'https://api.elsevier.com/content/author/author_id/{os.environ[\"SCOPUS_ID\"]}'
+              r = requests.get(url, headers=headers, timeout=15)
+              if r.status_code == 200:
+                  d = r.json()['author-retrieval-response'][0]['coredata']
+                  stats['scopus'] = {
+                      'h_index': int(d.get('h-index', stats['scopus'].get('h_index', 0))),
+                      'citations': int(d.get('citation-count', stats['scopus'].get('citations', 0))),
+                      'documents': int(d.get('document-count', stats['scopus'].get('documents', 0)))
+                  }
+                  print('✅ Scopus updated')
               else:
-                  print(f'Scopus API blocked (Status {r.status_code}). Institutional IP required.')
-          except Exception as e:
-              print(f'Scopus connection error: {e}')
+                  print(f'ℹ️ Scopus blocked (401). Keeping existing data.')
+          except: print('⚠️ Scopus connection error')
 
-          # 2. ORCID - Bu doim ishlaydi
-          try:
-              r = requests.get(f'https://pub.orcid.org/v3.0/{os.environ[\"ORCID_ID\"]}/works', 
-                               headers={'Accept': 'application/json'}, timeout=15)
-              if r.status_code == 200:
-                  stats['orcid']['works_count'] = len(r.json().get('group', []))
-                  print('ORCID success')
-          except:
-              print('ORCID failed')
-
-          # Faylga yozish
           os.makedirs('_data', exist_ok=True)
-          with open('_data/stats.yml', 'w') as f:
+          with open(file_path, 'w') as f:
               yaml.dump(stats, f)
           "
 
@@ -79,4 +76,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add _data/stats.yml
-          git diff --staged --quiet || (git commit -m "Update stats [skip ci]" && git push)
+          git commit -m "Update stats (ORCID auto, Scopus fallback)" || exit 0
+          git push
