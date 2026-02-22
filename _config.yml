@@ -2,11 +2,17 @@
 # Site settings
 # -----------------------------------------------------------------------------
 
-title: Makhmud Academic activities # the website title (if blank, full name will be used instead)
-# Site settings
-first_name: Mahmud
+# Profile ma'lumotlari
+first_name: Makhmud
+middle_name:
 last_name: Bobokandov
-contact_note: bmahmudbey@gmail.com
+email: bmahmudbey@gmail.com
+# Social (Ijtimoiy tarmoqlar va havolalar)
+orcid_id: 0000-0002-3326-4390
+github_username: mahmudbey
+# X (Twitter) foydalanuvchi nomingiz (PDF dagi @makhmudbey asosida taxmin qilingan)
+x_username: makhmudbey 
+scholar_userid: wd7-ywQAAAAJ # Google Scholar ID (oldingi ma'lumotlardan olingan)
 description: >
   Research on PDEs and Numerical Analysis.
   Academic portfolio for engineering and mathematics.
