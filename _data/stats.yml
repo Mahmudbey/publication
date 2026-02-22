@@ -1,0 +1,8 @@
+<div class="academic-stats">
+  <ul>
+    <li><strong>h-index:</strong> {{ site.data.stats.h_index }}</li>
+    <li><strong>Citations:</strong> {{ site.data.stats.citations }}</li>
+    <li><strong>Publications:</strong> {{ site.data.stats.documents }}</li>
+  </ul>
+  <p><small>Last updated: {{ site.data.stats.last_updated }}</small></p>
+</div>
