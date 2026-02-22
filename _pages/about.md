@@ -33,16 +33,16 @@ Put your address / P.O. box / other info right below your picture. You can also 
 
 Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them.
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 12px;">
-  <div class="stat-card">
-    <h5 style="color: #007396; border-bottom: 2px solid #007396;">Scopus Metrics</h5>
-    <p><strong>h-index:</strong> {{ site.data.stats.scopus.h_index }}</p>
-    <p><strong>Citations:</strong> {{ site.data.stats.scopus.citations }}</p>
-    <p><strong>Publications:</strong> {{ site.data.stats.scopus.documents }}</p>
+<div style="display: flex; justify-content: space-around; background: #f0f4f8; padding: 20px; border-radius: 10px; margin-top: 30px; border: 1px solid #d1d9e0;">
+  <div style="text-align: center;">
+    <h4 style="color: #005571; margin-bottom: 10px;">Scopus</h4>
+    <p style="margin: 0;"><b>h-index:</b> {{ site.data.stats.scopus.h_index }}</p>
+    <p style="margin: 0;"><b>Citations:</b> {{ site.data.stats.scopus.citations }}</p>
+    <p style="margin: 0;"><b>Papers:</b> {{ site.data.stats.scopus.documents }}</p>
   </div>
-  <div class="stat-card">
-    <h5 style="color: #A6CE39; border-bottom: 2px solid #A6CE39;">ORCID Public Record</h5>
-    <p><strong>Total Works:</strong> {{ site.data.stats.orcid.works_count }}</p>
-    <p><strong>ORCID iD:</strong> <a href="https://orcid.org/{{ site.data.stats.orcid.id }}" target="_blank" style="font-size: 0.9em;">{{ site.data.stats.orcid.id }}</a></p>
+  <div style="text-align: center; border-left: 1px solid #ccc; padding-left: 20px;">
+    <h4 style="color: #A6CE39; margin-bottom: 10px;">ORCID</h4>
+    <p style="margin: 0;"><b>Total Works:</b> {{ site.data.stats.orcid.works_count }}</p>
+    <p style="margin: 0;"><b>iD:</b> <a href="https://orcid.org/{{ site.data.stats.orcid.id }}" target="_blank">{{ site.data.stats.orcid.id }}</a></p>
   </div>
 </div>
