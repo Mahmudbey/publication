@@ -33,24 +33,25 @@ Put your address / P.O. box / other info right below your picture. You can also 
 
 Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them.
 
-
 <div class="academic-stats" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
-  <div style="display: flex; gap: 40px; justify-content: flex-start;">
+  <div style="display: flex; gap: 40px;">
     <div>
-      <h4 style="margin-bottom: 10px;">Google Scholar</h4>
-      <ul style="list-style: none; padding-left: 0;">
-        <li><strong>h-index:</strong> {{ site.data.stats.scholar.h_index }}</li>
-        <li><strong>Citations:</strong> {{ site.data.stats.scholar.citations }}</li>
-        <li><strong>i10-index:</strong> {{ site.data.stats.scholar.i10_index }}</li>
-      </ul>
-    </div>
-    <div>
-      <h4 style="margin-bottom: 10px;">Scopus</h4>
+      <h4 style="margin-bottom: 10px;">Scopus Stats</h4>
       <ul style="list-style: none; padding-left: 0;">
         <li><strong>h-index:</strong> {{ site.data.stats.scopus.h_index }}</li>
         <li><strong>Citations:</strong> {{ site.data.stats.scopus.citations }}</li>
-        <li><strong>Documents:</strong> {{ site.data.stats.scopus.documents }}</li>
+        <li><strong>Publications:</strong> {{ site.data.stats.scopus.documents }}</li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 style="margin-bottom: 10px;">ORCID Profile</h4>
+      <ul style="list-style: none; padding-left: 0;">
+        <li><strong>Works count:</strong> {{ site.data.stats.orcid.works_count }}</li>
+        <li><strong>ORCID ID:</strong> <a href="https://orcid.org/{{ site.data.stats.orcid.id }}">{{ site.data.stats.orcid.id }}</a></li>
       </ul>
     </div>
   </div>
 </div>
+
+
