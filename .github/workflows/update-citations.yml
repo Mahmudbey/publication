@@ -1,9 +1,9 @@
-name: Update Academic Stats (Scopus & ORCID)
+name: Update Academic Stats
 
 on:
   schedule:
-    - cron: "0 0 * * 1" # Har dushanba
-  workflow_dispatch: # Qo'lda ishga tushirish tugmasi
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -23,59 +23,35 @@ jobs:
       - name: Install dependencies
         run: pip install requests PyYAML
 
-      - name: Fetch Academic Data
+      - name: Fetch Data
         env:
           SCOPUS_API_KEY: ${{ secrets.SCOPUS_API_KEY }}
           SCOPUS_ID: "57432107100"
           ORCID_ID: "0000-0002-3326-4390"
         run: |
           python -c "
-          import requests
-          import yaml
-          import os
-
+          import requests, yaml, os
           stats = {'scopus': {}, 'orcid': {}}
-
-          # 1. Scopus ma'lumotlari
           try:
-              scopus_url = f'https://api.elsevier.com/content/author/author_id/{os.environ[\"SCOPUS_ID\"]}'
-              headers = {'X-ELS-APIKey': os.environ['SCOPUS_API_KEY'], 'Accept': 'application/json'}
-              r = requests.get(scopus_url, headers=headers, timeout=20)
+              r = requests.get(f'[https://api.elsevier.com/content/author/author_id/](https://api.elsevier.com/content/author/author_id/){os.environ[\"SCOPUS_ID\"]}', headers={'X-ELS-APIKey': os.environ['SCOPUS_API_KEY'], 'Accept': 'application/json'}, timeout=20)
               if r.status_code == 200:
-                  data = r.json()['author-retrieval-response'][0]['coredata']
-                  stats['scopus'] = {
-                      'h_index': int(data.get('h-index', 0)),
-                      'citations': int(data.get('citation-count', 0)),
-                      'documents': int(data.get('document-count', 0))
-                  }
-                  print('Scopus data updated.')
-          except Exception as e:
-              print(f'Scopus error: {e}')
-
-          # 2. ORCID ma'lumotlari (Public API kalit talab qilmaydi)
+                  d = r.json()['author-retrieval-response'][0]['coredata']
+                  stats['scopus'] = {'h_index': int(d.get('h-index', 0)), 'citations': int(d.get('citation-count', 0)), 'documents': int(d.get('document-count', 0))}
+          except: pass
           try:
-              orcid_url = f'https://pub.orcid.org/v3.0/{os.environ[\"ORCID_ID\"]}/works'
-              headers = {'Accept': 'application/json'}
-              r = requests.get(orcid_url, headers=headers, timeout=20)
+              r = requests.get(f'[https://pub.orcid.org/v3.0/](https://pub.orcid.org/v3.0/){os.environ[\"ORCID_ID\"]}/works', headers={'Accept': 'application/json'}, timeout=20)
               if r.status_code == 200:
-                  data = r.json()
-                  stats['orcid'] = {
-                      'works_count': len(data.get('group', [])),
-                      'id': os.environ['ORCID_ID']
-                  }
-                  print('ORCID data updated.')
-          except Exception as e:
-              print(f'ORCID error: {e}')
-
-          # _data/stats.yml fayliga yozish
+                  stats['orcid'] = {'works_count': len(r.json().get('group', [])), 'id': os.environ['ORCID_ID']}
+          except: pass
           os.makedirs('_data', exist_ok=True)
           with open('_data/stats.yml', 'w') as f:
-              yaml.dump(stats, f, default_flow_style=False)
+              yaml.dump(stats, f)
           "
 
-      - name: Commit and push changes
+      - name: Commit changes
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add _data/stats.yml
-          git diff --staged --quiet || (git commit -m "Update Scopus & ORCID stats" && git push)
+          git commit -m "Update stats" || exit 0
+          git push
