@@ -1,29 +1,10 @@
----
-layout: page
-title: publications
-permalink: /publications/
-nav: true
-nav_order: 2
----
-
-<div class="publications">
-
-  <div class="pub-filters" style="margin-bottom: 30px; padding: 15px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px;">
-    <input type="text" id="pubSearch" placeholder="Title, author or keywords..." style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc;">
-    
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-      <div>
-        <button onclick="exportData('bib')" class="btn btn-sm btn-outline-primary">Export .BIB</button>
-        <button onclick="exportData('csv')" class="btn btn-sm btn-outline-success">Export .CSV</button>
-        <button onclick="exportData('txt')" class="btn btn-sm btn-outline-secondary">Export .TXT</button>
-      </div>
-    </div>
+<div class="pub-filters" style="margin-bottom: 30px; padding: 20px; background: #fafafa; border-radius: 12px; border: 1px solid #ddd;">
+  <input type="text" id="pubSearch" placeholder="Maqola nomi, muallif yoki kalit so'zlar..." style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px;">
+  
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <button onclick="exportData('bib')" class="btn btn-sm z-depth-1" style="background-color: #007bff; color: white;">Eksport .BIB</button>
+    <button onclick="exportData('csv')" class="btn btn-sm z-depth-1" style="background-color: #28a745; color: white;">Eksport .CSV</button>
+    <button onclick="exportData('txt')" class="btn btn-sm z-depth-1" style="background-color: #6c757d; color: white;">Eksport .TXT</button>
   </div>
-
-  <div id="publications-list">
-    {% bibliography -f papers %}
-  </div>
-
+  <p style="font-size: 0.8rem; margin-top: 10px; color: #666;">* Faqat qidiruv natijasida ko'ringan maqolalar eksport qilinadi.</p>
 </div>
-
-<script src="{{ '/assets/js/pub-tools.js' | relative_url }}"></script>
